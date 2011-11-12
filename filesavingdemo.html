@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Experimental Standards-Compliant File Saving for TiddlyWiki</title>
+<style type="text/css">
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+textarea {
+	width: 100%;
+}
+
+</style>
+<script type="text/javascript">
+
+function click(node) {
+	var event = document.createEvent("MouseEvents");
+	event.initMouseEvent("click", true, false, null, 0, 0, 0, 0, 0,
+						false, false, false, false, 0, null);
+	return node.dispatchEvent(event);
+}
+
+function findChunk(source, startMarker, endMarker) {
+	var s = source.indexOf(startMarker);
+	if(s != -1) {
+		s += startMarker.length;
+		var e = source.lastIndexOf(endMarker);
+		if(e != -1)
+			return {start: s, end: e};
+	}
+	return null;
+}
+
+function save() {
+	// Retrieve the HTML of the page
+	var html_pre = "<!DOCTYPE html>\n<html>\n",
+		html_post = "\n</html>\n";
+	var html = html_pre + document.documentElement.innerHTML + html_post
+	// Splice in the content of the text area
+	var text = document.getElementById("sourceText").value;
+	var r = findChunk(html," id=\"source" + "Text\">","</text" + "area>");
+	if(r) {
+		html = html.substring(0,r.start) + "\n" + text + "\n" + html.substring(r.end);
+	}
+	// Construct a link to a data: URI of the HTML file
+	var link = "data:image/octet-stream;base64," + btoa(html);
+	var saveLink = document.createElement("a");
+	saveLink.href = link;
+	saveLink.type = "image/octet-stream";
+	saveLink.download = "SavedFile.html";
+	// Invoke the link, forcing a download of the content
+	document.body.appendChild(saveLink);
+	click(saveLink);
+	document.body.removeChild(saveLink);
+}
+
+</script>
+</head>
+<body>
+<h1>Experimental Standards-Compliant File Saving for TiddlyWiki</h1>
+<p>Type in the box below and then click the 
+<button onclick="save();">save</button> button to save your changes</p>
+<textarea rows="20" id="sourceText">
+Hello there!
+</textarea>
+</body>
+</html>
