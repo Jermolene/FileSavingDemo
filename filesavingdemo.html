@@ -80,10 +80,10 @@ function save() {
 		html = html.substring(0,r.start) + "\n" + text + "\n" + html.substring(r.end);
 	}
 	// Construct a link to a data: URI of the HTML file
-	var link = "data:image/octet-stream;base64," + btoa(html);
+	var link = "data:application/x-tiddlywiki;base64," + btoa(html); // Previously "image/octet-stream"
 	var saveLink = document.createElement("a");
 	saveLink.href = link;
-	saveLink.type = "image/octet-stream";
+	saveLink.type = "application/x-tiddlywiki";
 	saveLink.download = "SavedFile.html";
 	// Invoke the link, forcing a download of the content
 	click(saveLink);
